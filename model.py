@@ -7,7 +7,7 @@ import random
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
-dataPath = './training_data/02/'
+dataPath = './training_data/03/'
 
 #load csv file
 def loadDrivingLog(path):
@@ -51,8 +51,35 @@ def img_generator(data, batchSize = 32):
             y_batch = np.array(y_batch)
             yield shuffle(X_batch, y_batch)
 
+def loadImages(lines):
+    X = []
+    y = []
+    for line in lines:
+        image = cv2.imread(dataPath + 'IMG/'+ line[0].split('/')[-1])
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        steering_angle = float(line[3])
+        #appending original image
+        X.append(image)
+        y.append(steering_angle)
+        #appending flipped image
+        X.append(np.fliplr(image))
+        y.append(-steering_angle)
+        # appending left camera image and steering angle with offset
+        l_img = cv2.imread(dataPath + 'IMG/'+ line[1].split('/')[-1])
+        l_img = cv2.cvtColor(l_img, cv2.COLOR_BGR2RGB)
+        X.append(l_img)
+        y.append(steering_angle+0.4)
+        # appending right camera image and steering angle with offset
+        r_img = cv2.imread(dataPath + 'IMG/'+ line[2].split('/')[-1])
+        r_img = cv2.cvtColor(r_img, cv2.COLOR_BGR2RGB)
+        X.append(r_img)
+        y.append(steering_angle-0.3)
+
+    return np.array(X), np.array(y)
+
 lines = loadDrivingLog(dataPath)
-training, valid = train_test_split(lines, test_size = 0.2)
+# training, valid = train_test_split(lines, test_size = 0.2)
+X_train, y_train = loadImages(lines)
 
 from keras.models import Sequential
 from keras.layers import Convolution2D, Dropout, MaxPooling2D, Flatten, Activation, Dense, Cropping2D, Lambda
@@ -71,9 +98,6 @@ model.add(Convolution2D(64, 3, 3, activation='relu'))
 # model.add(Dropout(0.5))
 # model.add(MaxPooling2D())
 model.add(Flatten())
-# model.add(Dense(120))
-# model.add(Dense(84))
-# model.add(Dense(1))
 model.add(Dense(100))
 model.add(Dense(50))
 model.add(Dense(10))
@@ -81,7 +105,10 @@ model.add(Dense(1))
 
 #compiling and running the model
 model.compile(optimizer='adam', loss='mse')
-model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 2, validation_data=img_generator(valid), nb_val_samples=len(valid))
+# history_object = model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 2, validation_data=img_generator(valid), nb_val_samples=len(valid), verbose=1)
+history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, batch_size=32, epochs=10, verbose=1)
+
+print(history_object.history.keys())
 
 #saving the model
 model.save('model.h5')
