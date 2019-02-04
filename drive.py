@@ -21,6 +21,9 @@ app = Flask(__name__)
 model = None
 prev_image_array = None
 
+import cv2
+input_width = 200
+input_height = 66
 
 class SimplePIController:
     def __init__(self, Kp, Ki):
@@ -47,6 +50,17 @@ controller = SimplePIController(0.1, 0.002)
 set_speed = 15
 controller.set_desired(set_speed)
 
+def preprocessImg(img):
+    # filter out unnecessary scene and the car front part
+    img = img[70:-20, :, :]
+
+    # Resize to fit the Nvidia input image size
+    img = cv2.resize(img, (input_width, input_height), cv2.INTER_AREA)
+
+    # Change color space to YUV
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
+
+    return img
 
 @sio.on('telemetry')
 def telemetry(sid, data):
@@ -60,6 +74,7 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        image = preprocessImg(image)
         image_array = np.asarray(image)
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
