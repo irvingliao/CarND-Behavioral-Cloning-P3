@@ -167,7 +167,7 @@ model.compile(optimizer='adam', loss='mse')
 
 # Setup early stopping if there's no improvement of loss and store the best result.
 callbacks = [
-    EarlyStopping(patience=10, monitor='loss', min_delta=0, mode='min'),
+    EarlyStopping(patience=2, monitor='loss', min_delta=0, mode='min'),
     ModelCheckpoint('model_best.h5', monitor='loss', save_best_only=True, verbose=1)
 ]
 
