@@ -52,7 +52,11 @@ def img_generator(data, batchSize = 32):
             y_batch = []
             details = data[i: i+int(batchSize/4)]
             for line in details:
-                image = cv2.imread(dataPath + 'IMG/'+ line[0].split('/')[-1])
+                delimiter = '/'
+                if '/' not in line[0]:
+                    delimiter = '\\'
+
+                image = cv2.imread(dataPath + 'IMG/'+ line[0].split(delimiter)[-1])
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 steering_angle = float(line[3])
                 #appending original image
@@ -62,12 +66,12 @@ def img_generator(data, batchSize = 32):
                 # X_batch.append(np.fliplr(image))
                 # y_batch.append(-steering_angle)
                 # appending left camera image and steering angle with offset
-                l_img = cv2.imread(dataPath + 'IMG/'+ line[1].split('/')[-1])
+                l_img = cv2.imread(dataPath + 'IMG/'+ line[1].split(delimiter)[-1])
                 l_img = cv2.cvtColor(l_img, cv2.COLOR_BGR2RGB)
                 X_batch.append(l_img)
                 y_batch.append(steering_angle+0.4)
                 # appending right camera image and steering angle with offset
-                r_img = cv2.imread(dataPath + 'IMG/'+ line[2].split('/')[-1])
+                r_img = cv2.imread(dataPath + 'IMG/'+ line[2].split(delimiter)[-1])
                 r_img = cv2.cvtColor(r_img, cv2.COLOR_BGR2RGB)
                 X_batch.append(r_img)
                 y_batch.append(steering_angle-0.4)
@@ -76,12 +80,17 @@ def img_generator(data, batchSize = 32):
             y_batch = np.array(y_batch)
             yield shuffle(X_batch, y_batch)
 
+# Load all images directly
 def loadImages(lines):
     X = []
     y = []
     for i in range(len(lines)):
         line = lines[i]
-        image = cv2.imread(dataPath + 'IMG/'+ line[0].split('/')[-1])
+        delimiter = '/'
+        if '/' not in line[0]:
+            delimiter = '\\'
+            
+        image = cv2.imread(dataPath + 'IMG/'+ line[0].split(delimiter)[-1])
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         steering_angle = float(line[3])
         #appending original image
@@ -91,15 +100,23 @@ def loadImages(lines):
         # X.append(np.fliplr(image))
         # y.append(-steering_angle)
         # appending left camera image and steering angle with offset
-        l_img = cv2.imread(dataPath + 'IMG/'+ line[1].split('/')[-1])
+        delimiter = '/'
+        if '/' not in line[1]:
+            delimiter = '\\'
+
+        l_img = cv2.imread(dataPath + 'IMG/'+ line[1].split(delimiter)[-1])
         l_img = cv2.cvtColor(l_img, cv2.COLOR_BGR2RGB)
         X.append(l_img)
-        y.append(steering_angle+0.4)
+        y.append(steering_angle+0.45)
         # appending right camera image and steering angle with offset
-        r_img = cv2.imread(dataPath + 'IMG/'+ line[2].split('/')[-1])
+        delimiter = '/'
+        if '/' not in line[2]:
+            delimiter = '\\'
+
+        r_img = cv2.imread(dataPath + 'IMG/'+ line[2].split(delimiter)[-1])
         r_img = cv2.cvtColor(r_img, cv2.COLOR_BGR2RGB)
         X.append(r_img)
-        y.append(steering_angle-0.4)
+        y.append(steering_angle-0.45)
         print_progress(i+1, len(lines))
 
     return np.array(X), np.array(y)
@@ -136,10 +153,10 @@ model.add(Dense(1))
 model.compile(optimizer='adam', loss='mse')
 
 callbacks = [
-    EarlyStopping(patience=10, monitor='loss', min_delta=0, mode='min'),
+    EarlyStopping(patience=15, monitor='loss', min_delta=0, mode='min'),
     ModelCheckpoint('model_best.h5', monitor='loss', save_best_only=True, verbose=1)
 ]
-history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, batch_size=32, epochs=60, verbose=1, callbacks=callbacks)
+history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, batch_size=32, epochs=50, verbose=1, callbacks=callbacks)
 # history_object = model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 15, validation_data=img_generator(valid), nb_val_samples=len(valid), verbose=1, callbacks=callbacks)
 
 # print(history_object.history.keys())
