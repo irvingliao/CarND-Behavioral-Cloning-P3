@@ -167,12 +167,12 @@ model.compile(optimizer='adam', loss='mse')
 
 # Setup early stopping if there's no improvement of loss and store the best result.
 callbacks = [
-    EarlyStopping(patience=3, monitor='loss', min_delta=0, mode='min'),
+    EarlyStopping(patience=10, monitor='loss', min_delta=0, mode='min'),
     ModelCheckpoint('model_best.h5', monitor='loss', save_best_only=True, verbose=1)
 ]
 
 # history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, batch_size=32, epochs=50, verbose=1, callbacks=callbacks)
-history_object = model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 6, validation_data=img_generator(valid), nb_val_samples=len(valid), verbose=1, callbacks=callbacks)
+history_object = model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 5, validation_data=img_generator(valid), nb_val_samples=len(valid), verbose=1, callbacks=callbacks)
 
 # print(history_object.history.keys())
 
@@ -180,6 +180,6 @@ history_object = model.fit_generator(img_generator(training), samples_per_epoch=
 model.save('model.h5')
 
 #%%
-from keras.models import load_model
-obj = load_model('model.h5')
+# from keras.models import load_model
+# obj = load_model('model.h5')
 

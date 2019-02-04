@@ -66,28 +66,36 @@ def preprocessImg(img):
 def telemetry(sid, data):
     if data:
         # The current steering angle of the car
-        steering_angle = data["steering_angle"]
+        steering_angle = float(data["steering_angle"])
         # The current throttle of the car
-        throttle = data["throttle"]
+        throttle = float(data["throttle"])
         # The current speed of the car
-        speed = data["speed"]
+        speed = float(data["speed"])
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
-        image = preprocessImg(image)
-        image_array = np.asarray(image)
-        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
-
-        throttle = controller.update(float(speed))
-
-        print(steering_angle, throttle)
-        send_control(steering_angle, throttle)
-
         # save frame
         if args.image_folder != '':
             timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
             image_filename = os.path.join(args.image_folder, timestamp)
             image.save('{}.jpg'.format(image_filename))
+
+        image = np.asarray(image)
+        image_array = preprocessImg(image)
+        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+
+        # s_limit = 25
+        # if speed > s_limit:
+        #     s_limit = 9
+        # else:
+        #     s_limit = 25
+
+        # throttle = 1.0 - steering_angle**2 - (speed/s_limit)**2
+        throttle = controller.update(float(speed))
+
+        print(steering_angle, throttle)
+        send_control(steering_angle, throttle)
+
     else:
         # NOTE: DON'T EDIT THIS.
         sio.emit('manual', data={}, skip_sid=True)
