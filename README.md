@@ -2,6 +2,16 @@
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
+[Writeup](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/writeup.md)  
+[model.py](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/model.py)  
+[drive.py](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/drive.py)  
+[lake.mp4](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/Videos/lake.mp4)  
+[jungle.mp4](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/Videos/jungle.mp4)  
+
+Or on YouTubge:  
+[lake](https://youtu.be/kjrcxg0QH0w)  
+[jungle](https://youtu.be/MHXeek1U_t0)  
+
 Overview
 ---
 This repository contains starting files for the Behavioral Cloning Project.

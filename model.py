@@ -174,12 +174,23 @@ callbacks = [
 # history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, batch_size=32, epochs=50, verbose=1, callbacks=callbacks)
 history_object = model.fit_generator(img_generator(training), samples_per_epoch=len(training)*4, nb_epoch = 5, validation_data=img_generator(valid), nb_val_samples=len(valid), verbose=1, callbacks=callbacks)
 
-# print(history_object.history.keys())
-
 #saving the model
 model.save('model.h5')
 
 #%%
 # from keras.models import load_model
-# obj = load_model('model.h5')
+# from keras.models import Sequential
+# import matplotlib.pyplot as plt
+# history_object = load_model('model_final.h5')
 
+# print(history_object.summary())
+# print(history_object.history.keys())
+
+# ### plot the training and validation loss for each epoch
+# plt.plot(history_object.history['loss'])
+# plt.plot(history_object.history['val_loss'])
+# plt.title('model mean squared error loss')
+# plt.ylabel('mean squared error loss')
+# plt.xlabel('epoch')
+# plt.legend(['training set', 'validation set'], loc='upper right')
+# plt.show()
