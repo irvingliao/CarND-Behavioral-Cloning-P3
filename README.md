@@ -5,6 +5,7 @@
 [Writeup](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/writeup.md)  
 [model.py](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/model.py)  
 [drive.py](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/drive.py)  
+[model_final.h5](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/model_final.h5)  
 [lake.mp4](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/Videos/lake.mp4)  
 [jungle.mp4](https://github.com/irvingliao/CarND-Behavioral-Cloning-P3/blob/master/Videos/jungle.mp4)  
 
